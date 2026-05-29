@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修改博客 | 我的博客</title>
+
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="blog-editormd/css/editormd.css" />
+
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #4a6ee0;
+            --secondary-color: #6c757d;
+            --accent-color: #ff6b6b;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --border-color: #e9ecef;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* 导航栏样式 */
+        .nav {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 0.8rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav img {
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .blog-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .space {
+            flex-grow: 1;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-span {
+            margin-left: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .nav-span:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* 编辑区域样式 */
+        .content-edit {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* 发布控制区域 */
+        .push {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .push-left {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        #title {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        #title:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 110, 224, 0.2);
+        }
+
+        .push-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a5bc7;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+
+        .btn-danger {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #e55c5c;
+        }
+
+        /* 主要内容区域布局 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 编辑器容器样式 */
+        .editor-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 摘要区域样式 */
+        .summary-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: white;
+        }
+
+        .summary-label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .summary-label i {
+            color: var(--primary-color);
+        }
+
+        .summary-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            transition: var(--transition);
+        }
+
+        .summary-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 110, 224, 0.2);
+        }
+
+        .summary-counter {
+            text-align: right;
+            color: var(--secondary-color);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .summary-counter.warning {
+            color: var(--accent-color);
+        }
+
+        /* 文章设置区域 */
+        .blog-settings {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+
+        .settings-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .settings-title i {
+            color: var(--primary-color);
+        }
+
+        .setting-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .setting-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .setting-input {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .setting-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 110, 224, 0.2);
+        }
+
+        .setting-select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: white;
+            transition: var(--transition);
+        }
+
+        .setting-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 110, 224, 0.2);
+        }
+
+        .tag-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            min-height: 50px;
+        }
+
+        .tag {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .tag-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        /* 编辑器样式调整 */
+        #editor {
+            border-radius: 0 0 12px 12px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .editormd {
+            border: none;
+        }
+
+        .editormd-toolbar {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* 预览区域样式 */
+        .preview-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .preview-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .preview-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--secondary-color);
+            transition: var(--transition);
+        }
+
+        .preview-close:hover {
+            color: var(--accent-color);
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--secondary-color);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(74, 110, 224, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0.8rem 1rem;
+            }
+
+            .nav-links {
+                gap: 0.2rem;
+            }
+
+            .nav-span {
+                margin-left: 0.3rem;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+
+            .content-edit {
+                padding: 0 0.5rem;
+            }
+
+            .push {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .push-left,
+            .push-right {
+                width: 100%;
+            }
+
+            .push-right {
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .nav {
+                flex-wrap: wrap;
+            }
+
+            .nav-links {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 0.5rem;
+            }
+
+            .nav-span {
+                margin-left: 0.2rem;
+                padding: 0.3rem 0.6rem;
+                font-size: 0.85rem;
+            }
+
+            .push-right {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <img src="pic/logo2.jpg" alt="博客Logo">
+        <span class="blog-title">我的博客</span>
+        <div class="space"></div>
+        <div class="nav-links">
+            <a class="nav-span" href="blog_list.html">主页</a>
+            <a class="nav-span" href="blog_edit.html">写博客</a>
+            <a class="nav-span" href="blog_profile.html">个人资料</a>
+            <a class="nav-span" href="#" onclick="logout()">退出</a>
+        </div>
+    </div>
+
+    <div class="content-edit">
+        <!-- 发布控制区域 -->
+        <div class="push">
+            <div class="push-left">
+                <input type="text" id="title" placeholder="请输入文章标题...">
+            </div>
+            <div class="push-right">
+                <button class="btn btn-secondary" onclick="saveDraft()">
+                    <i class="far fa-save"></i> 保存草稿
+                </button>
+                <button class="btn btn-secondary" onclick="previewBlog()">
+                    <i class="far fa-eye"></i> 预览
+                </button>
+                <button class="btn btn-danger" onclick="clearContent()">
+                    <i class="fas fa-trash-alt"></i> 清空
+                </button>
+                <button class="btn btn-primary" id="submit" onclick="updateBlog()">
+                    <i class="fas fa-sync-alt"></i> 更新文章
+                </button>
+            </div>
+        </div>
+
+        <!-- 主要内容区域 -->
+        <div class="main-content">
+            <!-- 左侧：编辑器和摘要 -->
+            <div class="editor-container">
+                <!-- 摘要区域 -->
+                <div class="summary-section">
+                    <label class="summary-label">
+                        <i class="fas fa-align-left"></i> 文章摘要
+                    </label>
+                    <textarea class="summary-textarea" id="summary"
+                        placeholder="请输入文章摘要（可选），摘要将显示在博客列表页中..."></textarea>
+                    <div class="summary-counter" id="summaryCounter">0/200</div>
+                </div>
+
+                <!-- 编辑器区域 -->
+                <div id="editor">
+                    <textarea style="display:none;" id="content" name="content"></textarea>
+                </div>
+            </div>
+
+            <!-- 右侧：文章设置 -->
+            <div class="blog-settings">
+                <h3 class="settings-title"><i class="fas fa-cog"></i> 文章设置</h3>
+                <div class="setting-group">
+                    <label class="setting-label" for="category">文章分类</label>
+                    <select class="setting-select" id="category">
+                        <option value="">请选择分类</option>
+                        <option value="技术">技术</option>
+                        <option value="生活">生活</option>
+                        <option value="学习">学习</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label" for="status">发布状态</label>
+                    <select class="setting-select" id="status">
+                        <option value="publish">立即发布</option>
+                        <option value="draft">存为草稿</option>
+                        <option value="private">私密文章</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">文章标签</label>
+                    <div class="tag-input-container" id="tagContainer">
+                        <input type="text" class="tag-input" id="tagInput" placeholder="输入标签后按回车添加">
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label" for="coverImage">封面图片</label>
+                    <input type="file" class="setting-input" id="coverImage" accept="image/*">
+                </div>
+            </div>
+        </div>
+
+        <!-- 预览区域 -->
+        <div class="preview-container" id="previewContainer">
+            <div class="preview-header">
+                <h2 class="preview-title" id="previewTitle">文章预览</h2>
+                <button class="preview-close" onclick="closePreview()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="previewContent">
+                <!-- 预览内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="blog-editormd/editormd.min.js"></script>
+    <script src="blog-editormd/lib/marked.min.js"></script>
+    <script src="blog-editormd/lib/prettify.min.js"></script>
+    <script src="js/common.js"></script>
+
+    <script type="text/javascript">
+        let editor;
+        let tags = [];
+        let currentBlogId = null;
+
+        // 获取URL中的博客ID
+        function getBlogIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id') || urlParams.get('blog_id');
+        }
+
+        $(function () {
+            // 检查登录状态
+            const token = localStorage.getItem('user_token');
+            if (!token) {
+                alert('请先登录！');
+                window.location.href = 'blog_login.html';
+                return;
+            }
+
+            // 获取博客ID
+            currentBlogId = getBlogIdFromUrl();
+            if (!currentBlogId) {
+                showError('未找到博客ID');
+                return;
+            }
+
+            // 显示加载状态
+            //showLoading();
+
+            // 初始化编辑器
+            editor = editormd("editor", {
+                width: "100%",
+                height: "500px",
+                path: "blog-editormd/lib/",
+                saveHTMLToTextarea: true,
+                toolbarIcons: function () {
+                    return [
+                        "bold", "italic", "quote", "|",
+                        "list-ul", "list-ol", "hr", "|",
+                        "link", "reference-link", "image", "code", "preformatted-text", "code-block", "|",
+                        "watch", "preview", "fullscreen", "|",
+                        "help"
+                    ]
+                },
+                onload: function () {
+                    console.log('编辑器加载完成');
+                    // 编辑器加载完成后加载博客数据
+                    //loadBlogData();
+                }
+            });
+
+            loadBlogData();
+
+            // 标签输入处理
+            $('#tagInput').on('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const tagText = $(this).val().trim();
+                    if (tagText && !tags.includes(tagText)) {
+                        addTag(tagText);
+                        $(this).val('');
+                    }
+                }
+            });
+
+            // 摘要字数统计
+            $('#summary').on('input', function () {
+                const length = $(this).val().length;
+                const counter = $('#summaryCounter');
+                counter.text(length + '/200');
+                if (length > 200) {
+                    counter.addClass('warning');
+                } else {
+                    counter.removeClass('warning');
+                }
+            });
+        });
+
+        // 加载博客数据
+        function loadBlogData() {
+            $.ajax({
+                url: '/blog/getDetail',
+                type: 'POST',
+                data: {
+                    blogId: currentBlogId
+                },
+                headers: {
+                    'user_token': localStorage.getItem('user_token')
+                },
+                success: function (response) {
+                    if (response.code == 200 && response.data) {
+                        //hideLoading();
+                        renderBlogData(response.data);
+                    } else {
+                        showError('加载博客失败: ' + (response.errMsg || '未知错误'));
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('请求失败:', error);
+                }
+            });
+        }
+
+        // 渲染博客数据到表单
+        function renderBlogData(blogData) {
+            // 更新标题
+            $('#title').val(blogData.title || '');
+
+            // 更新摘要
+            $('#summary').val(blogData.summary || '');
+            $('#summary').trigger('input'); // 触发字数统计更新
+
+            // 更新分类
+            const categoryText = getCategoryText(blogData.categoryId);
+            $('#category').val(categoryText);
+
+            // 更新状态
+            $('#status').val('publish');
+
+            // 更新标签
+            if (blogData.tags && blogData.tags.length > 0) {
+                tags = blogData.tags;
+                tags.forEach(tag => addTag(tag));
+            }
+
+            // 更新编辑器内容
+            if (blogData.content && editor) {
+                editor.setMarkdown(blogData.content);
+            }
+
+            console.log('博客数据加载完成:', blogData);
+        }
+
+        // 根据分类ID获取分类文本
+        function getCategoryText(categoryId) {
+            switch (categoryId) {
+                case 1: return '技术';
+                case 2: return '生活';
+                case 3: return '学习';
+                case 4: return '其他';
+                default: return '';
+            }
+        }
+
+        // 根据分类文本获取分类ID
+        function getCategoryId(categoryText) {
+            switch (categoryText) {
+                case '技术': return 1;
+                case '生活': return 2;
+                case '学习': return 3;
+                case '其他': return 4;
+                default: return 0;
+            }
+        }
+
+        // 添加标签
+        function addTag(tagText) {
+            tags.push(tagText);
+            const tagElement = $('<span class="tag"></span>')
+                .html(`${tagText}<span class="tag-remove" onclick="removeTag('${tagText}')"><i class="fas fa-times"></i></span>`);
+            $('#tagInput').before(tagElement);
+        }
+
+        // 移除标签
+        function removeTag(tagText) {
+            tags = tags.filter(tag => tag !== tagText);
+            $(`.tag:contains('${tagText}')`).remove();
+        }
+
+        // 保存草稿
+        function saveDraft() {
+            const title = $('#title').val();
+            const content = editor.getMarkdown();
+            const summary = $('#summary').val();
+            const category = $('#category').val();
+            const status = $('#status').val();
+
+            const draft = {
+                id: currentBlogId,
+                title,
+                content,
+                summary,
+                category,
+                status,
+                tags,
+                timestamp: new Date().getTime()
+            };
+
+            localStorage.setItem('blog_draft_' + currentBlogId, JSON.stringify(draft));
+            showMessage('草稿已保存', 'success');
+        }
+
+        // 预览博客
+        function previewBlog() {
+            const title = $('#title').val() || '无标题';
+            const summary = $('#summary').val() || '暂无摘要';
+            const content = editor.getMarkdown();
+
+            $('#previewTitle').text(title);
+            let previewHTML = `<div class="preview-summary" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="margin-bottom: 0.5rem; color: var(--dark-color);">摘要</h4>
+                            <p style="color: var(--secondary-color); line-height: 1.6;">${summary}</p>
+                          </div>`;
+            previewHTML += marked.parse(content);
+            $('#previewContent').html(previewHTML);
+            $('#previewContainer').show();
+
+            // 滚动到预览区域
+            $('html, body').animate({
+                scrollTop: $('#previewContainer').offset().top - 20
+            }, 500);
+        }
+
+        // 关闭预览
+        function closePreview() {
+            $('#previewContainer').hide();
+        }
+
+        // 清空内容
+        function clearContent() {
+            if (confirm('确定要清空所有内容吗？此操作不可撤销。')) {
+                $('#title').val('');
+                $('#summary').val('');
+                editor.setMarkdown('');
+                $('#category').val('');
+                $('#status').val('publish');
+                tags = [];
+                $('.tag').remove();
+                $('#summaryCounter').text('0/200').removeClass('warning');
+                localStorage.removeItem('blog_draft_' + currentBlogId);
+                showMessage('内容已清空', 'success');
+            }
+        }
+
+        // 更新博客
+        function updateBlog() {
+            const title = $('#title').val().trim();
+            const content = editor.getMarkdown().trim();
+            const summary = $('#summary').val().trim();
+            const category = $('#category').val();
+            const status = $('#status').val();
+            const categoryId = getCategoryId(category);
+
+            if (!title) {
+                showMessage('请输入文章标题', 'error');
+                $('#title').focus();
+                return;
+            }
+
+            if (!content) {
+                showMessage('请输入文章内容', 'error');
+                return;
+            }
+
+            if (!category) {
+                showMessage('请选择文章分类', 'error');
+                return;
+            }
+
+            // 构建更新数据
+            const updateData = {
+                id: currentBlogId,
+                title,
+                content,
+                summary,
+                categoryId,
+                status: status === 'publish' ? 1 : 0
+            };
+
+            console.log('更新博客数据:', updateData);
+
+            // 发送AJAX请求更新博客
+            $.ajax({
+                url: '/blog/updateBlog',
+                type: 'POST',
+                data: {
+                    id: updateData.id,
+                    title: updateData.title,
+                    content: updateData.content,
+                    summary: updateData.summary,
+                    categoryId: updateData.categoryId,
+                    status: updateData.status,
+                },
+                //data: updateData,
+                headers: {
+                    'user_token': localStorage.getItem('user_token')
+                },
+                success: function (response) {
+                    if (response.code == 200 && response.data) {
+                        showMessage('博客更新成功！', 'success');
+                        // 清除草稿
+                        localStorage.removeItem('blog_draft_' + currentBlogId);
+                        // 2秒后跳转到博客列表
+                        setTimeout(() => {
+                            window.location.href = 'blog_list.html';
+                        }, 2000);
+                    } else {
+                        showMessage('更新失败: ' + (response.errMsg || '未知错误'), 'error');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('请求失败:', error);
+                    showMessage('网络请求失败: ' + error, 'error');
+                }
+            });
+        }
+
+        // 显示加载状态
+        function showLoading() {
+            $('.main-content').html(`
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>正在加载博客内容...</p>
+                </div>
+            `);
+        }
+
+        // 隐藏加载状态
+        function hideLoading() {
+            $('.loading').remove();
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            $('.main-content').html(`
+                <div class="error-state" style="text-align: center; padding: 3rem;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--accent-color); margin-bottom: 1rem;"></i>
+                    <h3>加载失败</h3>
+                    <p>${message}</p>
+                    <button class="btn btn-primary" onclick="window.location.href='blog_list.html'" style="margin-top: 1rem;">
+                        返回博客列表
+                    </button>
+                </div>
+            `);
+        }
+
+        // 显示消息
+        function showMessage(message, type) {
+            // 移除现有的消息
+            $('.message').remove();
+
+            const messageClass = type === 'success' ? 'message-success' : 'message-error';
+            const messageElement = $(`<div class="message ${messageClass}">${message}</div>`);
+
+            $('body').append(messageElement);
+
+            // 添加消息样式
+            if (!$('.message').length) {
+                $('<style>.message { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 6px; color: white; font-weight: 600; z-index: 1000; animation: slideIn 0.3s ease; } .message-success { background-color: #28a745; } .message-error { background-color: #dc3545; } @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }</style>').appendTo('head');
+            }
+
+            // 3秒后自动消失
+            setTimeout(() => {
+                messageElement.fadeOut(300, function () {
+                    $(this).remove();
+                });
+            }, 3000);
+        }
+
+        // 注销功能
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('user_token');
+                localStorage.removeItem('rememberMe');
+                localStorage.removeItem('username');
+                window.location.href = 'blog_login.html';
+            }
+        }
+
+    </script>
+</body>
+
+</html>

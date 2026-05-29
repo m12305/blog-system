@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>神秘彩蛋界面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .trigger-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .trigger-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            padding: 12px 25px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .trigger-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .hint {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* 彩蛋内容样式 */
+        .easter-egg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .egg-content {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .egg-content h2 {
+            color: #6a11cb;
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+
+        .egg-content p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .close-btn {
+            background: #6a11cb;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #2575fc;
+            transform: translateY(-2px);
+        }
+
+        /* 烟花效果 */
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* 旋转元素 */
+        .rotating {
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 浮动元素 */
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .subtitle { font-size: 1rem; }
+            .trigger-btn { padding: 10px 20px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🎉 神秘彩蛋界面 🎉</h1>
+    <p class="subtitle">探索隐藏的惊喜！尝试不同的方式触发彩蛋</p>
+
+    <div class="trigger-area">
+        <button class="trigger-btn" id="clickTrigger">点击这里</button>
+        <button class="trigger-btn" id="konamiTrigger">输入秘籍</button>
+        <button class="trigger-btn" id="shakeTrigger">摇动手机</button>
+        <button class="trigger-btn" id="secretTrigger">寻找秘密区域</button>
+    </div>
+
+    <div class="hint">
+        <p>提示：尝试点击页面不同区域或输入"上上下下左右左右BA"</p>
+    </div>
+
+    <!-- 装饰元素 -->
+    <div class="floating" style="position: absolute; top: 10%; left: 10%; font-size: 2rem;">✨</div>
+    <div class="rotating" style="position: absolute; bottom: 15%; right: 15%; font-size: 1.5rem;">🎁</div>
+    <div class="floating" style="position: absolute; top: 20%; right: 20%; font-size: 1.8rem;">🌟</div>
+</div>
+
+<!-- 彩蛋内容 -->
+<div class="easter-egg" id="easterEgg">
+    <div class="egg-content">
+        <h2>恭喜你发现了彩蛋！</h2>
+        <p>你真是个探索家！这个隐藏的彩蛋被你找到了。</p>
+        <p>在数字世界中，彩蛋是开发者留下的惊喜，给用户带来额外的乐趣。</p>
+        <p>感谢你的好奇心！</p>
+        <button class="close-btn" id="closeEgg">关闭彩蛋</button>
+    </div>
+</div>
+
+<script>
+        // 获取DOM元素
+        const easterEgg = document.getElementById('easterEgg');
+        const closeEggBtn = document.getElementById('closeEgg');
+        const clickTrigger = document.getElementById('clickTrigger');
+        const konamiTrigger = document.getElementById('konamiTrigger');
+        const shakeTrigger = document.getElementById('shakeTrigger');
+        const secretTrigger = document.getElementById('secretTrigger');
+
+        // 点击触发彩蛋
+        clickTrigger.addEventListener('click', showEasterEgg);
+
+        // 关闭彩蛋
+        closeEggBtn.addEventListener('click', () => {
+            easterEgg.style.display = 'none';
+            createFireworks(10); // 关闭时也放烟花
+        });
+
+        // 科乐美代码检测
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.code);
+            if (konamiCode.length > konamiSequence.length) {
+                konamiCode.shift();
+            }
+
+            if (konamiCode.join('') === konamiSequence.join('')) {
+                showEasterEgg();
+                konamiCode = [];
+            }
+        });
+
+        // 科乐美按钮
+        konamiTrigger.addEventListener('click', () => {
+            alert('在键盘上输入：上上下下左右左右BA');
+        });
+
+        // 摇动检测
+        let shakeThreshold = 15;
+        let lastAcceleration = { x: null, y: null, z: null };
+
+        if (window.DeviceMotionEvent) {
+            window.addEventListener('devicemotion', (e) => {
+                const acceleration = e.accelerationIncludingGravity;
+
+                if (lastAcceleration.x !== null) {
+                    const deltaX = Math.abs(acceleration.x - lastAcceleration.x);
+                    const deltaY = Math.abs(acceleration.y - lastAcceleration.y);
+                    const deltaZ = Math.abs(acceleration.z - lastAcceleration.z);
+
+                    if (deltaX + deltaY + deltaZ > shakeThreshold) {
+                        showEasterEgg();
+                    }
+                }
+
+                lastAcceleration.x = acceleration.x;
+                lastAcceleration.y = acceleration.y;
+                lastAcceleration.z = acceleration.z;
+            });
+        } else {
+            shakeTrigger.textContent = '摇动不可用';
+            shakeTrigger.disabled = true;
+        }
+
+        // 秘密区域触发
+        secretTrigger.addEventListener('click', () => {
+            // 创建20个随机位置的秘密区域
+            for (let i = 0; i < 20; i++) {
+                const secretArea = document.createElement('div');
+                secretArea.style.position = 'fixed';
+                secretArea.style.width = '30px';
+                secretArea.style.height = '30px';
+                secretArea.style.left = Math.random() * 90 + '%';
+                secretArea.style.top = Math.random() * 90 + '%';
+                secretArea.style.cursor = 'pointer';
+                secretArea.style.opacity = '0';
+                secretArea.style.zIndex = '50';
+
+                secretArea.addEventListener('click', () => {
+                    showEasterEgg();
+                    document.body.removeChild(secretArea);
+                    // 移除所有秘密区域
+                    document.querySelectorAll('.secret-area').forEach(area => {
+                        if (document.body.contains(area)) {
+                            document.body.removeChild(area);
+                        }
+                    });
+                });
+
+                secretArea.classList.add('secret-area');
+                document.body.appendChild(secretArea);
+            }
+
+            alert('20个隐藏区域已生成！点击任意一个即可触发彩蛋');
+        });
+
+        // 显示彩蛋函数
+        function showEasterEgg() {
+            easterEgg.style.display = 'flex';
+            createFireworks(30);
+            playSuccessSound();
+        }
+
+        // 创建烟花效果
+        function createFireworks(count) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.classList.add('firework');
+
+                    // 随机颜色
+                    const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    firework.style.background = color;
+
+                    // 随机位置
+                    firework.style.left = Math.random() * 100 + 'vw';
+                    firework.style.top = Math.random() * 100 + 'vh';
+
+                    document.body.appendChild(firework);
+
+                    // 烟花动画
+                    const size = Math.random() * 10 + 5;
+                    firework.animate([
+                        { transform: 'scale(0)', opacity: 1 },
+                        { transform: `scale(${size})`, opacity: 0 }
+                    ], {
+                        duration: 1000,
+                        easing: 'cubic-bezier(0, 0.9, 0.57, 1)'
+                    });
+
+                    // 移除元素
+                    setTimeout(() => {
+                        if (document.body.contains(firework)) {
+                            document.body.removeChild(firework);
+                        }
+                    }, 1000);
+                }, i * 100);
+            }
+        }
+
+        // 播放成功音效
+        function playSuccessSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+            oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+            oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        // 页面加载时的小动画
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.trigger-btn').forEach((btn, index) => {
+                btn.style.opacity = '0';
+                btn.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    btn.style.transition = 'all 0.5s ease';
+                    btn.style.opacity = '1';
+                    btn.style.transform = 'translateY(0)';
+                }, 300 + index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

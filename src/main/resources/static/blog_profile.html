@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人资料 | 我的博客</title>
+
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #4a6ee0;
+            --secondary-color: #6c757d;
+            --accent-color: #ff6b6b;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --border-color: #e9ecef;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* 导航栏样式 */
+        .nav {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 0.8rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav img {
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .blog-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .space {
+            flex-grow: 1;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-span {
+            margin-left: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .nav-span:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* 内容区域样式 */
+        .profile-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-subtitle {
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+
+        /* 卡片布局 */
+        .profile-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .profile-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 左侧卡片样式 */
+        .profile-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .avatar-edit {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .avatar-edit:hover {
+            background-color: #3a5bc7;
+            transform: scale(1.1);
+        }
+
+        .user-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .user-bio {
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .user-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        /* 右侧卡片样式 */
+        .settings-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--secondary-color);
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--dark-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 110, 224, 0.2);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 576px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a5bc7;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #e55c5c;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--secondary-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .danger-zone {
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            background-color: #f8d7da;
+            margin-top: 2rem;
+        }
+
+        .danger-title {
+            color: #721c24;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .danger-text {
+            color: #721c24;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0.8rem 1rem;
+            }
+
+            .nav-links {
+                gap: 0.2rem;
+            }
+
+            .nav-span {
+                margin-left: 0.3rem;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+
+            .profile-container {
+                padding: 0 0.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .nav {
+                flex-wrap: wrap;
+            }
+
+            .nav-links {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 0.5rem;
+            }
+
+            .nav-span {
+                margin-left: 0.2rem;
+                padding: 0.3rem 0.6rem;
+                font-size: 0.85rem;
+            }
+
+            .settings-tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                text-align: center;
+                border-bottom: none;
+                border-left: 3px solid transparent;
+            }
+
+            .tab.active {
+                border-left-color: var(--primary-color);
+                border-bottom: none;
+            }
+        }
+
+        /* 消息提示样式 */
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message-success {
+            background-color: #28a745;
+        }
+
+        .message-error {
+            background-color: #dc3545;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <img src="pic/logo2.jpg" alt="博客Logo">
+        <span class="blog-title">我的博客</span>
+        <div class="space"></div>
+        <div class="nav-links">
+            <a class="nav-span" href="blog_list.html">主页</a>
+            <a class="nav-span" href="blog_edit.html">写博客</a>
+            <a class="nav-span" href="blog_profile.html">个人资料</a>
+            <a class="nav-span" href="#" onclick="logout()">退出</a>
+        </div>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1 class="profile-title">个人资料</h1>
+            <p class="profile-subtitle">管理您的账户信息和设置</p>
+        </div>
+
+        <div class="profile-content">
+            <!-- 左侧个人信息卡片 -->
+            <div class="profile-card">
+                <div class="avatar-container">
+                    <img src="pic/doge.jpg" alt="用户头像" class="avatar" id="userAvatar">
+                    <div class="avatar-edit" onclick="document.getElementById('avatarInput').click()">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <input type="file" id="avatarInput" accept="image/*" style="display: none;"
+                        onchange="handleAvatarUpload(event)">
+                </div>
+                <h2 class="user-name" id="displayName">小马</h2>
+                <p class="user-bio" id="displayBio">热爱编程的前端开发者</p>
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="blogCount">999</span>
+                        <span class="stat-label">文章</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="categoryCount">999</span>
+                        <span class="stat-label">分类</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="followerCount">999</span>
+                        <span class="stat-label">粉丝</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧设置卡片 -->
+            <div class="settings-card">
+                <div class="settings-tabs">
+                    <div class="tab active" data-tab="profile">基本信息</div>
+                    <div class="tab" data-tab="password">修改密码</div>
+                    <div class="tab" data-tab="account">账户设置</div>
+                </div>
+
+                <!-- 基本信息标签页 -->
+                <div class="tab-content active" id="profile-tab">
+                    <form id="profileForm">
+                        <!-- <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="firstName">姓氏</label>
+                                <input type="text" class="form-input" id="firstName" value="小">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="lastName">名字</label>
+                                <input type="text" class="form-input" id="lastName" value="马">
+                            </div>
+                        </div> -->
+
+                        <div class="form-group">
+                            <label class="form-label" for="name">用户名</label>
+                            <input type="text" class="form-input" id="name" value="小马">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="displayNameInput">昵称</label>
+                            <input type="text" class="form-input" id="displayNameInput" value="小马">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="email">电子邮箱</label>
+                            <input type="email" class="form-input" id="email" value="xiaoma@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="bio">个人简介</label>
+                            <textarea class="form-input form-textarea"
+                                id="bio">热爱编程的前端开发者，专注于JavaScript和现代Web技术。</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="website">个人网站</label>
+                            <input type="url" class="form-input" id="website" value="https://xiaoma.dev">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="github">GitHub</label>
+                            <input type="url" class="form-input" id="github" value="https://github.com/xiaoma">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="updateProfile()">
+                            <i class="fas fa-save"></i> 保存更改
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 修改密码标签页 -->
+                <div class="tab-content" id="password-tab">
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label class="form-label" for="currentPassword">当前密码</label>
+                            <input type="password" class="form-input" id="currentPassword">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="newPassword">新密码</label>
+                            <input type="password" class="form-input" id="newPassword">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="confirmPassword">确认新密码</label>
+                            <input type="password" class="form-input" id="confirmPassword">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="changePassword()">
+                            <i class="fas fa-key"></i> 修改密码
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 账户设置标签页 -->
+                <div class="tab-content" id="account-tab">
+                    <div class="form-group">
+                        <label class="form-label">账户状态</label>
+                        <div style="padding: 1rem; background-color: #e7f3ff; border-radius: 8px;">
+                            <p style="color: var(--primary-color); font-weight: 600; margin-bottom: 0.5rem;">
+                                <i class="fas fa-check-circle"></i> 账户正常
+                            </p>
+                            <p style="color: var(--secondary-color); font-size: 0.9rem;">
+                                注册时间: 2023年1月15日
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="danger-zone">
+                        <h3 class="danger-title">
+                            <i class="fas fa-exclamation-triangle"></i> 危险操作
+                        </h3>
+                        <p class="danger-text">
+                            这些操作可能会对您的账户造成不可逆的影响，请谨慎操作。
+                        </p>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-danger btn-full" onclick="exportData()">
+                                <i class="fas fa-download"></i> 导出个人数据
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-danger btn-full" onclick="deleteAccount()">
+                                <i class="fas fa-trash-alt"></i> 删除账户
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // 标签切换功能
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function () {
+                // 移除所有标签和内容的激活状态
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                // 激活当前标签和对应内容
+                this.classList.add('active');
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+
+        // 显示消息
+        function showMessage(message, type) {
+            // 移除现有的消息
+            $('.message').remove();
+
+            const messageClass = type === 'success' ? 'message-success' : 'message-error';
+            const messageElement = $(`<div class="message ${messageClass}">${message}</div>`);
+
+            $('body').append(messageElement);
+
+            // 3秒后自动消失
+            setTimeout(() => {
+                messageElement.fadeOut(300, function () {
+                    $(this).remove();
+                });
+            }, 3000);
+        }
+
+        // 头像上传处理
+        // 头像上传处理
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // 验证文件类型
+                if (!file.type.startsWith('image/')) {
+                    showMessage('请选择图片文件', 'error');
+                    return;
+                }
+
+                // 验证文件大小 (限制为2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    showMessage('图片大小不能超过2MB', 'error');
+                    return;
+                }
+
+                // 创建预览
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    // 更新预览
+                    document.getElementById('userAvatar').src = e.target.result;
+
+                    // 使用 FormData
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    //formData.append('username', document.getElementById('username').value); // 如果需要其他字段
+
+                    // 发送AJAX请求更新用户资料
+                    $.ajax({
+                        url: '/user/updateAvatar',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,  // 必须设为 false
+                        contentType: false,  // 必须设为 false
+                        headers: {
+                            'user_token': localStorage.getItem('user_token')
+                        },
+                        success: function (response) {
+                            if (response.code == 200 && response.data) {
+                                showMessage('头像上传成功', 'success');
+                            } else {
+                                showMessage('更新失败', 'error');
+                                console.error('更新失败');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('请求失败:', error);
+                        }
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 更新个人资料
+        function updateProfile() {
+            //const firstName = document.getElementById('firstName').value.trim();
+            //const lastName = document.getElementById('lastName').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const displayName = document.getElementById('displayNameInput').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const bio = document.getElementById('bio').value.trim();
+            const website = document.getElementById('website').value.trim();
+            const github = document.getElementById('github').value.trim();
+
+            // 简单验证
+            if (!name || !displayName || !email) {
+                showMessage('请填写所有必填字段', 'error');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showMessage('请输入有效的电子邮箱', 'error');
+                return;
+            }
+
+            // 更新显示名称
+            document.getElementById('displayName').textContent = displayName;
+            document.getElementById('displayBio').textContent = bio;
+
+            // 发送AJAX请求更新用户资料
+            $.ajax({
+                url: '/user/updateUserInfo', // 后端API地址
+                type: 'POST',
+                data: {
+                    //username: name,
+                    nickname: displayName,
+                    email: email,
+                    bio: bio,
+                },
+                headers: {
+                    'user_token': localStorage.getItem('user_token')
+                },
+                success: function (response) {
+                    if (response.code == 200 && response.data) {
+                        showMessage('个人资料更新成功', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'blog_list.html';
+                        }, 2000);
+                    } else {
+                        showMessage('更新失败', 'error');
+                        console.error('更新失败');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('请求失败:', error);
+                }
+            });
+
+            // 模拟API调用
+            setTimeout(() => {
+                showMessage('个人资料更新成功', 'success');
+            }, 500);
+        }
+
+        // 修改密码
+        function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // 验证
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showMessage('请填写所有密码字段', 'error');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showMessage('新密码长度至少为6位', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showMessage('新密码与确认密码不匹配', 'error');
+                return;
+            }
+
+            // 发送AJAX请求修改密码
+            $.ajax({
+                url: '/user/updatePassword', // 后端API地址
+                type: 'POST',
+                data: {
+                    oldPassword: currentPassword,
+                    newPassword: newPassword,
+                },
+                headers: {
+                    'user_token': localStorage.getItem('user_token')
+                },
+                success: function (response) {
+                    if (response.code == 200 && response.data) {
+                        showMessage('密码已修改', 'success');
+                        setTimeout(() => {
+                            document.getElementById('passwordForm').reset();
+                            window.location.href = 'blog_profile.html';
+                        }, 2000);
+                    } else {
+                        showMessage('密码修改失败', 'error');
+                        console.error('密码修改失败');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('请求失败:', error);
+                }
+            });
+        }
+
+        // 导出个人数据
+        function exportData() {
+            if (confirm('确定要导出您的个人数据吗？这可能需要一些时间。')) {
+                // 模拟导出过程
+                showMessage('数据导出请求已提交，处理完成后将发送到您的邮箱', 'success');
+            }
+        }
+
+        // 删除账户
+        function deleteAccount() {
+            if (confirm('此操作将永久删除您的账户和所有数据，且无法恢复。确定要继续吗？')) {
+                const confirmText = prompt('请输入 "DELETE" 以确认删除操作:');
+                if (confirmText === 'DELETE') {
+                    // 发送AJAX请求删除用户
+                    $.ajax({
+                        url: '/user/delete', // 后端API地址
+                        type: 'POST',
+                        headers: {
+                            'user_token': localStorage.getItem('user_token')
+                        },
+                        success: function (response) {
+                            if (response.code == 200) {
+                                showMessage('账户已删除', 'success');
+                                setTimeout(() => {
+                                    logout_noask();
+                                }, 2000);
+                            } else {
+                                showMessage('注销失败', 'error');
+                                console.error('注销失败');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('请求失败:', error);
+                        }
+                    });
+                } else {
+                    showMessage('确认文本不匹配，操作已取消', 'error');
+                }
+            }
+        }
+
+        // 邮箱验证
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // 退出功能
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('user_token');
+                localStorage.removeItem('rememberMe');
+                localStorage.removeItem('username');
+                window.location.href = 'blog_login.html';
+            }
+        }
+
+        //直接退出不询问
+        function logout_noask() {
+            localStorage.removeItem('user_token');
+            localStorage.removeItem('rememberMe');
+            localStorage.removeItem('username');
+            window.location.href = 'blog_login.html';
+        }
+
+        // 页面加载时初始化
+        $(document).ready(function () {
+            检查登录状态
+            const token = localStorage.getItem('user_token');
+            if (!token) {
+                alert('请先登录！');
+                window.location.href = 'blog_login.html';
+                return;
+            }
+
+
+            //加载用户信息
+            loadUserInfo();
+            // 加载用户数据
+            //loadUserData();
+        });
+
+
+        // 加载用户信息
+        function loadUserInfo() {
+            // 模拟数据
+            const fake_userData = {
+                name: '小马',
+                displayName: '小马',
+                email: 'xiaoma@example.com',
+                bio: '热爱编程的前端开发者',
+                website: 'https://www.douyin.com/',
+                github: 'https://www.douyin.com/',
+                blogCount: 999,
+                categoryCount: 999,
+                followerCount: 999
+            };
+
+            // 发送AJAX请求获取用户信息
+            $.ajax({
+                url: '/user/getUserInfo', // 后端API地址
+                type: 'POST',
+                headers: {
+                    'user_token': localStorage.getItem('user_token')
+                },
+                success: function (response) {
+                    if (response.code == 200) {
+                        update_view(response.data, fake_userData);
+                    } else {
+                        console.error('加载用户信息失败:', response.message);
+                        // 使用默认用户信息
+                        update_view(fake_userData, fake_userData);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('请求用户信息失败:', error);
+                    // 使用默认用户信息
+                    update_view(fake_userData, fake_userData);
+                }
+            });
+        }
+
+        // 加载用户数据
+        function update_view(userData, fake_userData) {
+            // 更新页面显示
+            //document.getElementById('firstName').value = userData.firstName;
+            //document.getElementById('lastName').value = userData.lastName;
+            const tip = '（用户名不能修改）';
+
+            document.getElementById('name').value = userData.username + tip;
+            document.getElementById('displayNameInput').value = userData.nickname;
+            document.getElementById('email').value = userData.email;
+            document.getElementById('bio').value = userData.bio;
+            document.getElementById('website').value = fake_userData.website;
+            document.getElementById('github').value = fake_userData.github;
+
+            //document.getElementById('avatarInput').value = userData.avatar;
+
+            const avatarImg = document.getElementById('userAvatar');
+            if (userData.avatar) {
+                // 有头像链接：显示真实头像
+                avatarImg.src = userData.avatar;
+            } else {
+                // 无头像链接：显示默认头像（兜底）
+                avatarImg.src = 'pic/doge.jpg';
+            }
+
+
+            document.getElementById('displayName').textContent = userData.nickname;
+            document.getElementById('displayBio').textContent = userData.bio;
+            document.getElementById('blogCount').textContent = fake_userData.blogCount;
+            document.getElementById('categoryCount').textContent = fake_userData.categoryCount;
+            document.getElementById('followerCount').textContent = fake_userData.followerCount;
+        }
+    </script>
+</body>
+
+</html>
